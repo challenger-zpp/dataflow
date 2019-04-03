@@ -11,14 +11,15 @@ import pandas as pd
 
 with open('etc.yaml','r') as f:
     etc = yaml.load(f)
+    
 sql_etc = etc['sql_dailyquote']
 
 
-def get_sql_conn(sqlstr):
-    conn=pymssql.connect(sql_etc['host'], sql_etc['user'], sql_etc['password'], sql_etc['db'],charset='cp936') 
-    rawdata=pd.read_sql(sqlstr,conn)
+def get_raw_data(sql_str):
+    conn = pymssql.connect(sql_etc['host'], sql_etc['user'], sql_etc['password'], sql_etc['db'],charset='cp936') 
+    raw_data = pd.read_sql(sql_str,conn)
     conn.close()
-    return rawdata
+    return raw_data
 
 
 def get_daily_quote(stock_code,start_date,end_date):
@@ -29,9 +30,9 @@ def get_daily_quote(stock_code,start_date,end_date):
     ----------
     stock_code
         股票代码
-    stardate
+    star_date
         开始日期 yyyymmdd
-    enddate
+    endd_ate
         结束日期 yyyymmdd
         
     Returns
@@ -41,13 +42,14 @@ def get_daily_quote(stock_code,start_date,end_date):
     '''       
     
     
-    sqlstr='''
-    select TradeDate,StockCode,[Open],[Close],High,Low,Vol,Amount,AdjFactor,TradeStatus 
+    sql_str='''
+    SELECT 
+    TradeDate,StockCode,[Open],[Close],High,Low,Vol,Amount,AdjFactor,TradeStatus 
     FROM BasicData.dbo.DailyQuote 
-    where StockCode='%s' and TradeDate>='%s' and TradeDate<='%s'
+    WHERE StockCode='%s' and TradeDate>='%s' and TradeDate<='%s'
     '''%(stock_code,start_date,end_date)
     
-    quotedata=get_sql_conn(sqlstr)
-    quotedata=quotedata.sort_values('TradeDate',ascending = True)
+    quote_data= get_raw_data(sql_str)
+    quote_data=quote_data.sort_values('TradeDate',ascending = True)
     
-    return quotedata
+    return quote_data
