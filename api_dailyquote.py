@@ -6,7 +6,6 @@ Created on Wed Apr  3 10:05:55 2019
 """
 
 import pymssql
-import datetime as dt
 import yaml
 import pandas as pd
 
@@ -16,13 +15,13 @@ sql_etc = etc['sql_dailyquote']
 
 
 def get_sql_conn(sqlstr):
-    conn=pymssql.connect(sql_etc['host'], sql_etc['user'], sql_etc['password'], sql_etc['db']) 
+    conn=pymssql.connect(sql_etc['host'], sql_etc['user'], sql_etc['password'], sql_etc['db'],charset='cp936') 
     rawdata=pd.read_sql(sqlstr,conn)
     conn.close()
     return rawdata
 
 
-def get_daily_quote(stock_code,startdate,enddate):
+def get_daily_quote(stock_code,start_date,end_date):
     '''
     获取股票日线行情。
     
@@ -43,10 +42,10 @@ def get_daily_quote(stock_code,startdate,enddate):
     
     
     sqlstr='''
-    select TradeDate,StockCode,Open,Close,High,Low,Vol,Amount,AdjFactor,TradeStatus 
+    select TradeDate,StockCode,[Open],[Close],High,Low,Vol,Amount,AdjFactor,TradeStatus 
     FROM BasicData.dbo.DailyQuote 
     where StockCode='%s' and TradeDate>='%s' and TradeDate<='%s'
-    '''%(stock_code,startdate,enddate)
+    '''%(stock_code,start_date,end_date)
     
     quotedata=get_sql_conn(sqlstr)
     quotedata=quotedata.sort_values('TradeDate',ascending = True)
