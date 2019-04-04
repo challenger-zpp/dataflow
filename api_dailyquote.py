@@ -4,12 +4,13 @@ Created on Wed Apr  3 10:05:55 2019
 
 @author: guosen
 """
-
+import os
 import pymssql
 import yaml
 import pandas as pd
 
-with open('etc.yaml','r') as f:
+
+with open(os.path.join(os.path.split(__file__)[0],'etc.yaml'),'r') as f:
     etc = yaml.load(f)
     
 sql_etc = etc['sql_dailyquote']

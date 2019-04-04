@@ -6,15 +6,16 @@ Created on Tue Apr  2 10:43:57 2019
 """
 
 # api_realtime.py
-
+import os
 import json
 import datetime as dt
 import yaml
 import pandas as pd
 import redis
 
-with open('etc.yaml','r') as f:
+with open(os.path.join(os.path.split(__file__)[0],'etc.yaml'),'r') as f:
     etc = yaml.load(f)
+    
 redis_etc = etc['redis_realtime_min']
 pool = redis.ConnectionPool(host = redis_etc['host'],
                 port = redis_etc['port'], 
