@@ -17,6 +17,7 @@ sql_etc = etc['sql_dailyquote']
 
 
 def get_engine():
+    
     engine=sqlalchemy.create_engine('mssql+pymssql://%s:%s@%s/%s'%(sql_etc['user'], sql_etc['password'], sql_etc['host'],sql_etc['db']))
     return engine
 
@@ -130,7 +131,8 @@ def get_daily_quote_SWInd(index_code,start_date,end_date):
     WHERE StockCode='%s' and TradeDate>='%s' and TradeDate<='%s'
     '''%(index_code,start_date,end_date)
     
-    quote_data= get_raw_data(sql_str)
-    quote_data=quote_data.sort_values('TradeDate',ascending = True)
+    quote_data = get_raw_data(sql_str)
+    quote_data = quote_data.sort_values('TradeDate',ascending = True)
     
     return quote_data
+
