@@ -13,8 +13,10 @@ import yaml
 import pandas as pd
 import redis
 
-with open(os.path.join(os.path.split(__file__)[0],'etc.yaml'),'r') as f:
+with open('etc.yaml','r') as f: # 本地测试用语句
     etc = yaml.load(f)
+#with open(os.path.join(os.path.split(__file__)[0],'etc.yaml'),'r') as f:
+#    etc = yaml.load(f)
     
 redis_etc = etc['redis_realtime_min']
 pool = redis.ConnectionPool(host = redis_etc['host'],

@@ -64,6 +64,48 @@ def get_daily_quote(stock_code,start_date,end_date):
     
     return quote_data
 
+
+def get_daily_quotes(stock_universe,start_date,end_date,kind = 'Close'):
+    '''
+    获取股票日线行情。
+    
+    Parameters
+    ----------
+    stock_universe
+        list,股票池
+    star_date
+        开始日期 yyyymmdd
+    endd_ate
+        结束日期 yyyymmdd
+    kind
+        str,数据种类,Close,High,Low,Vol,Amount,AdjFactor,TradeStatus
+        
+    Returns
+    -------
+    DataFrame
+        若无数据,则返回None
+    '''       
+    if isinstance(start_date,int):
+       start_date=str(start_date)
+    if isinstance(end_date,int):
+       end_date=str(end_date)
+    
+    sql_str='''
+    SELECT 
+    TradeDate,StockCode,[{kind}] 
+    FROM BasicData.dbo.DailyQuote 
+    WHERE StockCode IN ({universe_str}) and TradeDate>='{start}' and TradeDate<='{end}'
+    '''.format(kind = kind, 
+    universe_str = ','.join(["'%s'"%each for each in stock_universe]),
+    start = start_date,
+    end = end_date)
+    
+    quote_data= get_raw_data(sql_str)
+    quote_data=quote_data.sort_values('TradeDate',ascending = True).\
+    pivot_table(values = kind,index = 'TradeDate',columns = 'StockCode')
+        
+    return quote_data
+
 def get_daily_quote_index(index_code,start_date,end_date):
     '''
     获取指数日线行情。
@@ -95,9 +137,8 @@ def get_daily_quote_index(index_code,start_date,end_date):
     WHERE StockCode='%s' and TradeDate>='%s' and TradeDate<='%s'
     '''%(index_code,start_date,end_date)
     
-    quote_data= get_raw_data(sql_str)
-    quote_data=quote_data.sort_values('TradeDate',ascending = True)
-    
+    quote_data = get_raw_data(sql_str)
+    quote_data = quote_data.sort_values('TradeDate',ascending = True)
     return quote_data
 
 def get_daily_quote_SWInd(index_code,start_date,end_date):
@@ -136,3 +177,6 @@ def get_daily_quote_SWInd(index_code,start_date,end_date):
     
     return quote_data
 
+if __name__ == '__main__':
+    stock_universe = ['000001.SZ','600887.SH']
+    a = get_daily_quotes(stock_universe,'20190101','20190401')
