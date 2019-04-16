@@ -9,7 +9,7 @@ Created on Thu Oct 12 15:53:38 2017
 
 import pandas as pd
 from WindPy import w
-from utils import (code_2_wind_symbol,
+from .utils import (code_2_wind_symbol,
                    dict_2_str,date_format_convert)
 # from missfactor.quantlib.data_handle import fund_like
 
