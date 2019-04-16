@@ -9,7 +9,7 @@ Created on Thu Oct 12 15:53:38 2017
 
 import pandas as pd
 from WindPy import w
-from utils import (code_2_wind_symbol,
+from .utils import (code_2_wind_symbol,
                    dict_2_str,date_format_convert)
 # from missfactor.quantlib.data_handle import fund_like
 
@@ -102,8 +102,10 @@ def get_wsd(universe,factors,start_date,end_date,names = None,
     '''       
     
     options = dict_2_str(options)
-    start_date = date_format_convert(start_date)
-    end_date = date_format_convert(end_date)
+    if len(start_date)==8:
+        start_date = date_format_convert(start_date)
+    if len(end_date)==8:
+        end_date = date_format_convert(end_date)
     
     if if_convert:
         universe_wind = code_2_wind_symbol(universe)
@@ -119,7 +121,11 @@ def get_wsd(universe,factors,start_date,end_date,names = None,
         else:
             df = pd.DataFrame(data.Data,columns = data.Times,index = data.Fields).T
     else:
-        df = pd.DataFrame(data.Data,columns = data.Times,index = data.Codes).T
+       try:
+          df = pd.DataFrame(data.Data,columns = data.Times,index = data.Codes).T
+       except AssertionError:
+          df = pd.DataFrame(data.Data,columns = data.Codes,index = data.Times)
+      
     return df
 
  
@@ -144,8 +150,10 @@ def get_tdays(start_date,end_date,**options):
         Datetime64,ASC
     '''
     options = dict_2_str(options)
-    start_date = date_format_convert(start_date)
-    end_date = date_format_convert(end_date) 
+    if len(start_date)==8:
+        start_date = date_format_convert(start_date)
+    if len(end_date)==8:
+        end_date = date_format_convert(end_date)
     
     t_days = w.tdays(start_date, end_date, options)
     t_days = pd.Series(t_days.Data[0])
@@ -198,8 +206,10 @@ def get_edb(idx_universe,start_date,end_date,names = None,**options):
     '''
     assert len(names) == len(idx_universe)
     options = dict_2_str(options)
-    start_date = date_format_convert(start_date)
-    end_date = date_format_convert(end_date) 
+    if len(start_date)==8:
+        start_date = date_format_convert(start_date)
+    if len(end_date)==8:
+        end_date = date_format_convert(end_date)
 
     idx_universe = ','.join(idx_universe)
     edb = w.edb(idx_universe,start_date,end_date,options)

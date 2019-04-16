@@ -21,7 +21,7 @@ sql_etc = etc['sql_wind']
 
 def get_engine():
     
-    engine=sqlalchemy.create_engine('mssql+pymssql://%s:%s@%s/%s'%(sql_etc['user'], sql_etc['password'], sql_etc['host'],sql_etc['db']))
+    engine=sqlalchemy.create_engine('mssql+pymssql://%s:%s@%s/%s?charset=cp936'%(sql_etc['user'], sql_etc['password'], sql_etc['host'],sql_etc['db']))#,encoding='utf-8',convert_unicode=True)
     return engine
 
 
