@@ -7,21 +7,28 @@ Created on Thu Nov 30 14:39:12 2017
 
 # calendar.py
 
+import os
+import pickle
 import pandas as pd
-from wind_api import get_tdays
 
 class Calendar():
     
     def __init__(self,start_date = '20100101',end_date = '20200101',
-                 exchange = None):
+                 exchange = None,path = None):
         self.start_date = start_date
         self.end_date = end_date
         self.exchange = exchange
+        self.path = path
         self.trade_calendar = None
         self.natural_calendar = None
-        self._fetch_calendar()
+
+        if self.path is not None:
+            self.loads()
+        else:
+            self._fetch_calendar()
         
     def _fetch_calendar(self):
+        from .wind_api import get_tdays
         if self.exchange:
             self.trade_calendar = get_tdays(self.start_date,self.end_date,
                                   TradingCalendar = self.exchange)
@@ -108,6 +115,38 @@ class Calendar():
                 dates = self.trade_calendar.loc[self.trade_calendar <= t_date]
                 return dates.tolist()[0].to_pydatetime()
         
+    def persist(self,path):
+        '''
+        保存日历到指定路径.
+        
+        Parameters
+        ----------
+        path
+            保存路径
+        '''
+        self.path = path
+        status = {'start_date':self.start_date,
+                 'end_date':self.end_date,
+                 'path':self.path}
+        self.trade_calendar.to_excel(os.path.join(self.path,'calendar_data.xlsx'))
+        with open(os.path.join(self.path,'calendar_status.pkl'),'wb') as f:
+            pickle.dump(status,f)
+            
+    def loads(self):
+        '''
+        从指定路径读取日历。
+        
+        Parameters
+        ----------
+        path
+            读取路径        
+        '''
+        self.trade_calendar = pd.read_excel(os.path.join(self.path,'calendar_data.xlsx'))
+        with open(os.path.join(self.path,'calendar_status.pkl'),'rb') as f:
+            status = pickle.load(f)        
+        self.start_date = status['start_date']
+        self.end_date = status['end_date']
+        self.path = status['path']
         
 if __name__ == '__main__':
     a = Calendar('20010101','20180515')
