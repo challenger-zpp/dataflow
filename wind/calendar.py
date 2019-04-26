@@ -141,7 +141,7 @@ class Calendar():
         path
             读取路径        
         '''
-        self.trade_calendar = pd.read_excel(os.path.join(self.path,'calendar_data.xlsx'))
+        self.trade_calendar = pd.read_excel(os.path.join(self.path,'calendar_data.xlsx'))[0]
         with open(os.path.join(self.path,'calendar_status.pkl'),'rb') as f:
             status = pickle.load(f)        
         self.start_date = status['start_date']
