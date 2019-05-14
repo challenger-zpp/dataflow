@@ -36,8 +36,8 @@ class Calendar():
                                      SELECT trade_date FROM trade_calendar
                                      WHERE trade_date >= '{start_date}' AND
                                      trade_date <= '{end_date}'
-                                     '''.format(start_date = '20100101',
-                                     end_date = '20150101'),
+                                     '''.format(start_date = self.start_date,
+                                     end_date = self.end_date),
                                      engine)
         self.trade_calendar = trade_calendar['trade_date']                                        
         self.natural_calendar = pd.Series(pd.date_range(start=self.start_date,
